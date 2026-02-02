@@ -1,16 +1,29 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import authService from './api/auth.service';
+import { login, logout } from './store/authSlice';
 
 function App() {
-  
+  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
 
-  return (
-    <>
-     <h1>Hellow Bhai!</h1>
-    </>
-  )
+  useEffect(() => {
+    authService.getCurrentUser()
+      .then((userData) => {
+        if (userData) {
+          dispatch(login(userData.data));
+        } else {
+          dispatch(logout());
+        }
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  return !loading ? (
+    <div>
+      <h1>Hello</h1>
+    </div>
+  ) : <h1>Loading...</h1>;
 }
 
 export default App
