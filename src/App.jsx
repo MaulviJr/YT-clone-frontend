@@ -3,13 +3,15 @@ import { useDispatch } from 'react-redux';
 import authService from './api/auth.service';
 import { login, logout } from './store/authSlice';
 import SignUp from './components/SignUp';
+import SignUpPage from './pages/SignUpPage';
+import LoginPage from './pages/LoginPage';
 function App() {
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
 
   useEffect(() => {
     // Attempt to get the current user to see if they are already logged in
-    authService.getCurrentUser()
+    // authService.getCurrentUser()
       // .then((userData) => {
       //   if (userData) {
       //     // Accessing userData.data based on your ApiResponse structure
@@ -26,7 +28,9 @@ function App() {
 
   return !false ? (
     <>
-      <SignUp />
+      {/* <SignUpPage/> */}
+      {/* <SignUp/> */}
+      <LoginPage/>
     </>
   ) : (
     <h1>Loading...</h1>

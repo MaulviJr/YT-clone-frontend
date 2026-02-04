@@ -53,6 +53,7 @@ export class AuthService {
         try {
             // Your backend accepts (username || email)
             const response = await axiosInstance.post("/users/login", formData);
+            console.log("AuthService :: login :: response", response);
             return response.data.data; // Returns the loggedInUser
         } catch (error) {
             throw error.response?.data || error;
