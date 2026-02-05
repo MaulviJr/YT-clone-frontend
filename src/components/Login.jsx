@@ -1,8 +1,8 @@
 import { useForm } from "react-hook-form"
-import { useDispatch } from "react-redux"
+import { useDispatch,useSelector } from "react-redux"
 import { login } from "../store/authSlice"
 import authService from "../api/auth.service.js"
-import { useState } from "react"
+import { useState,useEffect } from "react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -33,17 +33,25 @@ export default function Login() {
     },
   })
 
+  
   const dispatch = useDispatch()
   const [loading, setLoading] = useState(false)
   const [apiError, setApiError] = useState("")
+  const stateCheck= useSelector(state=>state.auth.userData)
+  
+useEffect(() => {
+  console.log("Updated userData:", stateCheck)
+}, [stateCheck])
 
   const onSubmit = async (data) => {
     setLoading(true)
     setApiError("")
-    try {
+    try { 
+      console.log("I am before response")
       const response = await authService.login(data)
-      console.log(response)
-      dispatch(login(response.data))
+     
+      dispatch(login(response)) // not using res.data because in auth service we are throwing it after doing res.data.data
+      
     } catch (error) {
       setApiError(error.message || "Login failed")
     } finally {
