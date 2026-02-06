@@ -42,7 +42,68 @@ export class AuthService {
             throw error.response?.data || error;
         }
     }
+
+    async getProfile(userId) {
+        try {
+            const response = await axiosInstance.get(`/users/c/${userId}`);
+            return response.data.data;
+        } catch (error) {
+            throw error.response?.data || error;
+        }
 }
 
+    async changePassword(passwordData) {
+        try {
+            const response = await axiosInstance.post("/users/change-password", passwordData);
+            return response.data.data;
+        } catch (error) {
+            throw error.response?.data || error;
+        }
+}
+
+    async updateDetails(detailsData) {
+        try {
+            const response = await axiosInstance.patch("/users/update-details", detailsData);
+            return response.data.data;
+        } catch (error) {
+            throw error.response?.data || error;
+        }
+    }
+
+    async updateAvatar(avatarData) {
+        try {
+            const response = await axiosInstance.patch("/users/update-avatar", avatarData);
+            return response.data.data;
+        } catch (error) {
+            throw error.response?.data || error;
+        }}
+
+    async updateCoverImage(coverImageData) {
+        try {
+            const response = await axiosInstance.patch("/users/update-cover", coverImageData);
+            return response.data.data;
+        } catch (error) {
+            throw error.response?.data || error;
+        }}
+
+    async getWatchHistory() {
+        try {
+            const response = await axiosInstance.get("/users/get-history");
+            return response.data.data;
+        } catch (error) {
+            throw error.response?.data || error;
+        }
+    }
+
+    async refreshToken() {
+        try {
+            const response = await axiosInstance.post("/users/refresh-token");
+            return response.data.data; // Assuming it returns new tokens
+        } catch (error) {
+            throw error.response?.data || error;
+        }
+    }
+
+}
 const authService = new AuthService();
 export default authService;

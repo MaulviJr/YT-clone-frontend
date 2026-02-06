@@ -47,11 +47,11 @@ const VideoCard = ({ video, index }) => {
                     />
                 </div>
                 <div className="flex flex-col gap-1 overflow-hidden">
-                    <h3 className="text-sm font-bold line-clamp-2 leading-snug text-[#f1f1f1]">
+                    <h3 className="text-sm font-bold line-clamp-2 leading-snug">
                         {video.title}
                     </h3>
-                    <div className="text-[12px] text-[#aaaaaa]">
-                        <p className="hover:text-white transition-colors">{video.owner.fullName}</p>
+                    <div className="text-[12px] ">
+                        <p >{video.owner.fullName}</p>
                         <p>{formatViews(video.views)} views • {new Date(video.createdAt).toLocaleDateString()}</p>
                     </div>
                 </div>
