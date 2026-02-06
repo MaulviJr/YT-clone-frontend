@@ -3,16 +3,16 @@ import axiosInstance from "./axiosInstance";
 export class AuthService {
 
     async createAccount(formData) {
-  const response = await axiosInstance.post(
-    "/users/register",
-    formData
-  );
+        const response = await axiosInstance.post(
+            "/users/register",
+            formData
+        );
 
-  return response.data;
-}
+        return response.data.data;
+    }
 
 
-       async login(formData) {
+    async login(formData) {
         try {
             // Your backend accepts (username || email)
             const response = await axiosInstance.post("/users/login", formData);
