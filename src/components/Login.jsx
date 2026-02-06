@@ -3,7 +3,7 @@ import { useDispatch,useSelector } from "react-redux"
 import { login } from "../store/authSlice"
 import authService from "../api/auth.service.js"
 import { useState,useEffect } from "react"
-
+import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -17,7 +17,7 @@ import {
   FieldDescription,
   FieldGroup,
   FieldLabel,
-  FieldSeparator,
+  
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 
@@ -37,17 +37,17 @@ export default function Login() {
   const dispatch = useDispatch()
   const [loading, setLoading] = useState(false)
   const [apiError, setApiError] = useState("")
-  const stateCheck= useSelector(state=>state.auth.userData)
+  // const stateCheck= useSelector(state=>state.auth.userData)
   
-useEffect(() => {
-  console.log("Updated userData:", stateCheck)
-}, [stateCheck])
+// useEffect(() => {
+//   console.log("Updated userData:", stateCheck)
+// }, [stateCheck])
 
   const onSubmit = async (data) => {
     setLoading(true)
     setApiError("")
     try { 
-      console.log("I am before response")
+      
       const response = await authService.login(data)
      
       dispatch(login(response)) // not using res.data because in auth service we are throwing it after doing res.data.data
@@ -134,9 +134,9 @@ useEffect(() => {
 
                 <FieldDescription className="text-center">
                   Don&apos;t have an account?{" "}
-                  <a href="#" className="text-accent hover:underline">
+                  <Link to="/signup" className="text-accent hover:underline">
                     Sign up
-                  </a>
+                  </Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>
