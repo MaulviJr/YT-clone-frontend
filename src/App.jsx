@@ -17,6 +17,7 @@ function App() {
       .then((userData) => {
         if (userData) {
           // Accessing userData.data based on your ApiResponse structure
+          console.log("from app.jsx", userData)
           dispatch(login(userData));
         } else {
           dispatch(logout());

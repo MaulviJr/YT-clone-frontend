@@ -4,7 +4,7 @@ export class VideoService {
     async fetchVideos(queryParams) {
         try {
             const response = await axiosInstance.get("/videos", { params: queryParams });
-            return response.data.data; 
+            return response.data.data.docs; 
         } catch (error) {
             throw error.response?.data || error;
         }
@@ -62,6 +62,14 @@ export class VideoService {
         }
     }
 
+    async updateVideoViews(videoId) {
+        try {
+            const response = await axiosInstance.patch(`/videos/views/${videoId}`);
+            return response.data.data;
+        } catch (error) {
+            throw error.response?.data || error;
+        }
+    }
 
 }
 

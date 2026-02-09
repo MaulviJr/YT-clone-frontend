@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axiosInstance from '../api/axiosInstance';
+import videoService from '../api/video.service';
 
-export const fetchVideos = createAsyncThunk("videos/fetchAll", async ({ query = "", category = "" }) => {
-    const response = await axiosInstance.get(`/videos`, { params: { query, category } });
-    return response.data.data; 
-});
+export const getVideos = createAsyncThunk("videos/fetchAll", (queryParams) => {
+    return videoService.fetchVideos(queryParams);
+  });
 
 const videoSlice = createSlice({
     name: 'videos',
@@ -20,15 +20,15 @@ const videoSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(fetchVideos.pending, (state) => {
+            .addCase(getVideos.pending, (state) => {
                 state.isLoading = true;
                 state.error = null;
             })
-            .addCase(fetchVideos.fulfilled, (state, action) => {
+            .addCase(getVideos.fulfilled, (state, action) => {
                 state.isLoading = false;
                 state.videos = action.payload;
             })
-            .addCase(fetchVideos.rejected, (state, action) => {
+            .addCase(getVideos.rejected, (state, action) => {
                 state.isLoading = false;
                 state.error = action.error.message;
             });

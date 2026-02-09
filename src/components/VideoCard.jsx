@@ -41,8 +41,8 @@ const VideoCard = ({ video, index }) => {
             <div className="flex gap-3">
                 <div className="flex-shrink-0">
                     <img 
-                        src={video.owner.avatar} 
-                        alt={video.owner.username} 
+                        src={video.ownerDetails.avatar} 
+                        alt={video.ownerDetails.username} 
                         className="h-9 w-9 rounded-full object-cover border border-white/10"
                     />
                 </div>
@@ -51,7 +51,7 @@ const VideoCard = ({ video, index }) => {
                         {video.title}
                     </h3>
                     <div className="text-[12px] ">
-                        <p >{video.owner.fullName}</p>
+                        <p >{video.ownerDetails.fullName}</p>
                         <p>{formatViews(video.views)} views • {new Date(video.createdAt).toLocaleDateString()}</p>
                     </div>
                 </div>
