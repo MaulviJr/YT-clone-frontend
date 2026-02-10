@@ -2,43 +2,57 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import authService from './api/auth.service';
 import { login, logout } from './store/authSlice';
-import SignUp from './components/SignUp';
-import SignUpPage from './pages/users/SignUpPage';
-import LoginPage from './pages/users/LoginPage';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
+import Header from './components/Header'; // Ensure path is correct
+import Sidebar from './components/Sidebar';
 
 function App() {
   const [loading, setLoading] = useState(true);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const dispatch = useDispatch();
+  const location = useLocation();
+
+  // Determine if we should show the sidebar (e.g., hide on login/signup)
+  const showNav = !['/login', '/signup'].includes(location.pathname);
 
   useEffect(() => {
-    // Attempt to get the current user to see if they are already logged in
     authService.getCurrentUser()
       .then((userData) => {
         if (userData) {
-          // Accessing userData.data based on your ApiResponse structure
-          console.log("from app.jsx", userData)
-          dispatch(login(userData));
+          console.log(userData);
+          dispatch(login({
+        user: userData,
+        accessToken: null,
+        refreshToken: null
+      }));
         } else {
           dispatch(logout());
         }
       })
-      .catch((err) => {
-        console.log("App :: useEffect :: error", err);
-      })
-      .finally(() => setLoading(false)); // This line is required to show your UI
+      .catch((err) => console.log("App :: useEffect :: error", err))
+      .finally(() => setLoading(false));
   }, [dispatch]);
 
-  return !loading ? (
-    <>
-    {/* Header to here */}
-    <main>
-      <Outlet />
-    </main>
-    {/* Footer from here */}
-    </>
-  ) : (
-    <h1>Loading...</h1>
+  const toggleSidebar = () => setIsSidebarCollapsed(!isSidebarCollapsed);
+
+  if (loading) return <h1 className="p-4">Loading...</h1>;
+
+  return (
+    <div className="flex flex-col h-screen bg-background text-foreground">
+      {/* Persistent Header */}
+      <Header onMenuClick={toggleSidebar} />
+
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar - only shown on non-auth pages */}
+        {showNav && <Sidebar isCollapsed={isSidebarCollapsed} />}
+
+        {/* Dynamic Page Content */}
+        <main className="flex-1 overflow-y-auto">
+          <Outlet />
+        </main>
+      </div>
+    </div>
   );
 }
-export default App
+
+export default App;

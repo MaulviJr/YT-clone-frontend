@@ -13,14 +13,14 @@ import VideoCard from '../../components/VideoCard';
 // Using standard shadcn components as requested
 import { Button } from "@/components/ui/button";
 import Header from "../../components/Header.jsx"
-
+import Sidebar from '@/components/Sidebar';
 const mockVideos = [
 
 ];
 
 const HomePage = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   
   // Accessing both video and auth state
   const { videos, isLoading, error } = useSelector((state) => state.videos || { videos: [], isLoading: false, error: null });
@@ -35,27 +35,14 @@ const HomePage = () => {
     }
   }, [dispatch]);
 
-  const handleLogout = async () => {
-    try {
-      // 1. Call backend logout to clear cookies/session
-      await authService.logout();
-    } catch (err) {
-      console.error("Logout API failed, but clearing local state anyway:", err);
-    } finally {
-      // 2. Clear local Redux store regardless of API success for security
-      dispatch(logout());
-      // 3. Navigate to login
-      navigate("/login");
-    }
-  };
-
   const displayVideos = videos && videos.length > 0 ? videos : mockVideos;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Navigation Header */}
     
-      <Header/>
+      {/* <Header/> */}
+      {/* <SideNavigation/> */}
       <main className="container px-4 md:px-6 py-6 max-w-360 mx-auto">
         {/* Category Pills */}
         <div className="flex gap-3 overflow-x-auto no-scrollbar pb-4 mb-6">
