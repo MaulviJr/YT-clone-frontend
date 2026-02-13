@@ -11,6 +11,12 @@ import AuthLayout from './components/AuthLayout'
 import { RouterProvider } from 'react-router'
 import HomePage from './pages/users/HomePage'
 import MyProfile from './pages/users/MyProfile'
+import ProfileHome from './components/profileComponents/ProfileHome'
+import ProfileAbout from './components/profileComponents/ProfileAbout'
+import ProfileCommunity from './components/profileComponents/ProfileCommunity'
+import ProfilePlaylist from './components/profileComponents/ProfilePlaylist'
+import ProfileVideo from './components/profileComponents/ProfileVideo'
+
 
 const router = createBrowserRouter([
   {
@@ -47,7 +53,15 @@ const router = createBrowserRouter([
           <AuthLayout authentication={true}>
            <MyProfile/>
           </AuthLayout>
-        )
+        ),
+        children: [
+          { index: true, element: <ProfileHome /> },
+    { path: 'videos', element: <ProfileVideo /> },
+    { path: 'about', element: <ProfileAbout /> },
+    { path: 'community', element: <ProfileCommunity /> },
+    { path: 'playlists', element: <ProfilePlaylist /> },
+
+        ]
       }
 
     ]

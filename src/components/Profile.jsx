@@ -66,8 +66,9 @@
 //     </div>
 //   );
 // }
+import { NavLink } from 'react-router-dom';
 
-
+import { Outlet } from 'react-router-dom';
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import authService from '@/api/auth.service';
@@ -80,12 +81,19 @@ import { Navigate } from 'react-router-dom';
  * Redesigned with a YouTube-like interface while maintaining 
  * the original logic and data structures.
  */
-export default function Profile({children}) {
+export default function Profile() {
   const [channelInfo, setChannelInfo] = useState(null);
   const { username } = useParams();
   const userData = useSelector(state => state.auth.userData);
 const navigate = useNavigate()
 
+const tabs = [
+  { label: "Home", path: "" },
+  { label: "Videos", path: "videos" },
+  { label: "Playlists", path: "playlists" },
+  { label: "Community", path: "community" },
+  { label: "About", path: "about" },
+];
 
 
   const isOwnProfile = !username || username === userData?.user.username;
@@ -191,26 +199,34 @@ const navigate = useNavigate()
         </div>
 
         {/* 3. Navigation Tabs (Static UI) */}
-        <div className="mt-8 border-b border-border overflow-x-auto no-scrollbar">
-          <div className="flex items-center gap-8 min-w-max">
-            {['Home', 'Videos', 'Shorts', 'Playlists', 'Community', 'About'].map((tab, idx) => (
-              <button
-                key={tab}
-                className={`pb-3 text-sm md:text-base font-medium transition-colors relative ${
-                  idx === 0 
-                    ? "text-foreground after:absolute after:bottom-0 after:left-0 after:w-full after:h-[3px] after:bg-foreground" 
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
-        </div>
+       <div className="mt-8 border-b border-border overflow-x-auto no-scrollbar">
+  <div className="flex items-center gap-8 min-w-max">
+
+    {tabs.map((tab) => (
+      <NavLink
+        key={tab.label}
+        to={tab.path}
+        end={tab.path === ""}
+        className={({ isActive }) =>
+          `pb-3 text-sm md:text-base font-medium transition-colors relative ${
+            isActive
+              ? "text-foreground after:absolute after:bottom-0 after:left-0 after:w-full after:h-[3px] after:bg-foreground"
+              : "text-muted-foreground hover:text-foreground"
+          }`
+        }
+      >
+        {tab.label}
+      </NavLink>
+
+    ))}
+
+  </div>
+</div>
+
 
         {/* 4. Content Area Placeholder */}
         <div className="mt-12 py-20 text-center flex flex-col items-center justify-center border-2 border-dashed border-border rounded-3xl opacity-50">
-          {children}
+         <Outlet />
         </div>
       </div>
     </div>
