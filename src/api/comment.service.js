@@ -1,6 +1,6 @@
 import axiosInstance from "./axiosInstance";
 
-export class commentService {
+export class CommentService {
 
     async createComment(videoId, commentData) {
         try {
@@ -40,5 +40,5 @@ export class commentService {
 
 }
 
-const commentService = new commentService();
+const commentService = new CommentService();
 export default commentService;

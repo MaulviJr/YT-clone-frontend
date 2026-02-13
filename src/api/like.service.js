@@ -1,6 +1,6 @@
 import axiosInstance from "./axiosInstance";
 
-export class likeService {
+export class LikeService {
 
     async toggleVideoLike(videoId) {
         try {
@@ -41,5 +41,5 @@ export class likeService {
 
 }
 
-const likeService = new likeService();
+const likeService = new LikeService();
 export default likeService;

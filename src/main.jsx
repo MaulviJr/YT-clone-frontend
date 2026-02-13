@@ -11,12 +11,17 @@ import AuthLayout from './components/AuthLayout'
 import { RouterProvider } from 'react-router'
 import HomePage from './pages/users/HomePage'
 import MyProfile from './pages/users/MyProfile'
-import ProfileHome from './components/profileComponents/ProfileHome'
-import ProfileAbout from './components/profileComponents/ProfileAbout'
-import ProfileCommunity from './components/profileComponents/ProfileCommunity'
-import ProfilePlaylist from './components/profileComponents/ProfilePlaylist'
-import ProfileVideo from './components/profileComponents/ProfileVideo'
 
+import {
+  ProfileHome,
+  ProfileAbout,
+  ProfileCommunity,
+  ProfilePlaylist,
+  ProfileVideo
+}
+from './components/profileComponents/profCompIndex.js'
+
+import VideoPlay from './pages/videos/VideoPlay'
 
 const router = createBrowserRouter([
   {
@@ -62,7 +67,16 @@ const router = createBrowserRouter([
     { path: 'playlists', element: <ProfilePlaylist /> },
 
         ]
+      },
+      {
+         path: '/watch/:videoId',
+        element: (
+          <AuthLayout authentication={true}>
+           <VideoPlay/>
+          </AuthLayout>
+        )
       }
+
 
     ]
 

@@ -1,9 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-
+import { Link } from 'react-router-dom';
 const VideoCard = ({ video, index }) => {
     // Utility to format seconds into HH:MM:SS
     const formatDuration = (seconds) => {
+         seconds = Math.floor(seconds);
         const h = Math.floor(seconds / 3600);
         const m = Math.floor((seconds % 3600) / 60);
         const s = seconds % 60;
@@ -19,6 +20,7 @@ const VideoCard = ({ video, index }) => {
     };
 
     return (
+        <Link to={`/watch/${video._id}`} className="block">
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -57,6 +59,7 @@ const VideoCard = ({ video, index }) => {
                 </div>
             </div>
         </motion.div>
+        </Link>
     );
 };
 
