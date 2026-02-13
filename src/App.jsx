@@ -33,7 +33,7 @@ function App() {
       .finally(() => setLoading(false));
   }, [dispatch]);
 
-  const toggleSidebar = () => setIsSidebarCollapsed(!isSidebarCollapsed);
+ const toggleSidebar = () => setIsSidebarCollapsed(!isSidebarCollapsed);
 
   if (loading) return <h1 className="p-4">Loading...</h1>;
 

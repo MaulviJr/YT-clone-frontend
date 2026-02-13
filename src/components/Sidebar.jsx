@@ -49,9 +49,9 @@ const Sidebar = ({ isCollapsed }) => {
         try {
           // Adjust the ID access based on your specific userData structure
           const userId = userData?._id || userData?.user?._id;
-          console.log("Fetching subscriptions for user ID:", userId);
+      
           const response = await subscriptionService.getSubscribedChannels(userId);
-          console.log("Fetched subscriptions:", response);
+          
           // Assuming response.data contains the list of channels
           setSubscriptions(response || []);
         } catch (error) {
@@ -65,7 +65,7 @@ const Sidebar = ({ isCollapsed }) => {
   return (
     <aside 
       className={`
-        hidden md:flex flex-col border-r border-border bg-background transition-all duration-300
+        flex flex-col border-r border-border bg-background transition-all duration-300
         ${!isCollapsed ? 'w-64' : 'w-20'}
       `}
     >
@@ -89,7 +89,7 @@ const Sidebar = ({ isCollapsed }) => {
                     key={sub._id}
                     label={sub?.fullName || "Channel"}
                     avatar={sub?.avatar}
-                    path={`/channel/${sub?.username}`}
+                    path={`/profile/${sub?.username}`}
                     isCollapsed={isCollapsed}
                   />
                 ))

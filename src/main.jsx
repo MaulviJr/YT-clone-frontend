@@ -10,6 +10,7 @@ import SignUpPage from './pages/users/SignUpPage'
 import AuthLayout from './components/AuthLayout'
 import { RouterProvider } from 'react-router'
 import HomePage from './pages/users/HomePage'
+import MyProfile from './pages/users/MyProfile'
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,15 @@ const router = createBrowserRouter([
         element: (
           <AuthLayout authentication={false}>
            <SignUpPage/>
+          </AuthLayout>
+        )
+      }
+      ,
+      {
+        path: '/profile/:username?',
+        element: (
+          <AuthLayout authentication={true}>
+           <MyProfile/>
           </AuthLayout>
         )
       }

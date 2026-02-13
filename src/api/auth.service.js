@@ -104,6 +104,15 @@ export class AuthService {
         }
     }
 
+    async getChannelInfo(username) {
+        try {
+            const response = await axiosInstance.get(`/users/c/${username}`);
+            return response.data.data;
+        } catch (error) {
+            throw error.response?.data || error;
+        }
+    }
+    
 }
 const authService = new AuthService();
 export default authService;

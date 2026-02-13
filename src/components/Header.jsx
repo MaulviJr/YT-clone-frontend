@@ -34,7 +34,7 @@ const Header = ({ onMenuClick }) => {
   
   const authUser = useSelector((state) => state.auth?.userData);
   const authStatus = useSelector((state) => state.auth?.status);
-  console.log("I am below AuthUser",authUser);
+
   // Define paths where the search and user actions should be hidden
   const isAuthPage = ['/login', '/signup'].includes(location.pathname);
 
@@ -114,8 +114,8 @@ const Header = ({ onMenuClick }) => {
                     <HeaderButton variant="ghost" size="icon"><Bell className="h-5 w-5" /></HeaderButton>
                   </div>
                   <div className="flex items-center gap-3 ml-2">
-                    <div className="relative group cursor-pointer" onClick={() => navigate('/profile')}>
-                      {  console.log("I am above avatar of authUser",authUser)}
+                    <div className="relative group cursor-pointer" onClick={() => navigate(`/profile/${authUser?.user?.username}`)}>
+                      {/* {  console.log("I am above avatar of authUser",authUser)} */}
                       <img 
                         src={authUser?.user?.avatar} 
                         alt="User profile" 
