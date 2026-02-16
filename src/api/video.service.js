@@ -13,7 +13,7 @@ export class VideoService {
     async getVideoById(videoId) {
         try {
             const response = await axiosInstance.get(`/videos/${videoId}`);
-            return response.data.data;
+            return response.data.data[0];
         } catch (error) {
             throw error.response?.data || error;
         }}
