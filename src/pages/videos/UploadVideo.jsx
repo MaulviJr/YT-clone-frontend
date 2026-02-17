@@ -12,7 +12,7 @@ function UploadVideo() {
   const [isUploading, setIsUploading] = useState(false);
 
   // Watch file fields to show selected filenames
-  const selectedVideo = watch("video");
+  const selectedVideo = watch("videoFile");
   const selectedThumbnail = watch("thumbnail");
 
   const handleSumbit = async (data) => {

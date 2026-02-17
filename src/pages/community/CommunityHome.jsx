@@ -78,7 +78,15 @@ function CommunityHome() {
                                     >
                                         Cancel
                                     </Button>
-                                    <Button className="rounded-full h-9 px-6 text-sm font-bold bg-primary text-primary-foreground">
+                                    <Button className="rounded-full h-9 px-6 text-sm font-bold bg-primary text-primary-foreground"
+                                    onClick={() => {
+                                        // Here you would typically dispatch an action to create a new post
+                                        // For now, we'll just reset the input state
+
+                                        setIsInputFocused(false);
+                                        uploadPost();
+                                    }}
+                                    >
                                         Post
                                     </Button>
                                 </div>
