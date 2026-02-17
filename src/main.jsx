@@ -22,7 +22,8 @@ import {
 from './components/profileComponents/profCompIndex.js'
 
 import {
-  CommunityHome
+  CommunityHome,
+  UploadCommunity
 } from './pages/community/commIndex.js'
 
 import VideoPlay from './pages/videos/VideoPlay'
@@ -95,7 +96,15 @@ const router = createBrowserRouter([
            <CommunityHome/>
           </AuthLayout>
         )
-      }
+      },
+      {
+          path: '/upload-community',
+        element: (
+          <AuthLayout authentication={true}>
+           <UploadCommunity/>
+          </AuthLayout>
+        )
+      },
 
 
     ]

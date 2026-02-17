@@ -26,13 +26,13 @@ const HomePage = () => {
   const { videos, isLoading, error } = useSelector((state) => state.videos || { videos: [], isLoading: false, error: null });
 
 
-  // console.log("videos: ", videos)
+  console.log("videos: ", videos)
 
   useEffect(() => {
     // Only attempt fetch if the action exists in your store
-    if (dispatch && getVideos) {
+    
       dispatch(getVideos({}));
-    }
+    
   }, [dispatch]);
 
   const displayVideos = videos && videos.length > 0 ? videos : mockVideos;
