@@ -11,7 +11,7 @@ import AuthLayout from './components/AuthLayout'
 import { RouterProvider } from 'react-router'
 import HomePage from './pages/users/HomePage'
 import MyProfile from './pages/users/MyProfile'
-
+import UploadVideo from './pages/videos/UploadVideo'
 import {
   ProfileHome,
   ProfileAbout,
@@ -20,6 +20,10 @@ import {
   ProfileVideo
 }
 from './components/profileComponents/profCompIndex.js'
+
+import {
+  CommunityHome
+} from './pages/community/commIndex.js'
 
 import VideoPlay from './pages/videos/VideoPlay'
 
@@ -73,6 +77,22 @@ const router = createBrowserRouter([
         element: (
           <AuthLayout authentication={true}>
            <VideoPlay/>
+          </AuthLayout>
+        )
+      },
+      {
+        path: '/upload',
+        element: (
+          <AuthLayout authentication={true}>
+           <UploadVideo/>
+          </AuthLayout>
+        )
+      },
+      {
+          path: '/community',
+        element: (
+          <AuthLayout authentication={true}>
+           <CommunityHome/>
           </AuthLayout>
         )
       }

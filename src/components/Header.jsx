@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate, useLocation } from 'react-router-dom'; // Added useLocation
+import { useNavigate, useLocation, Link } from 'react-router-dom'; // Added useLocation
 import { LogOut, Play, Search, Menu, Bell, Video, X } from 'lucide-react';
 import { logout } from '@/store/authSlice.js';
 import authService from '@/api/auth.service';
@@ -110,7 +110,8 @@ const Header = ({ onMenuClick }) => {
               {authStatus || authUser ? (
                 <>
                   <div className="flex items-center gap-1">
-                    <HeaderButton variant="ghost" size="icon"><Video className="h-5 w-5" /></HeaderButton>
+                    <Link to="/upload">
+                    <HeaderButton variant="ghost" size="icon"><Video className="h-5 w-5" /></HeaderButton></Link>
                     <HeaderButton variant="ghost" size="icon"><Bell className="h-5 w-5" /></HeaderButton>
                   </div>
                   <div className="flex items-center gap-3 ml-2">

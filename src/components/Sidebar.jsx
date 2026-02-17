@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Compass, PlaySquare, Film, User } from 'lucide-react';
+import { Home, Compass, PlaySquare, Film, Users } from 'lucide-react';
 import subscriptionService from '@/api/subscription.service';
 import { useSelector } from 'react-redux';
 import { Separator } from './ui/separator';
@@ -15,7 +15,9 @@ const SidebarItem = ({ icon: Icon, label, path, isCollapsed, avatar }) => {
       onClick={() => navigate(path)}
       className={`
         flex items-center cursor-pointer rounded-xl transition-colors
-        ${!isCollapsed ? 'px-3 py-2 gap-5 mx-2' : 'flex-col py-3 gap-1 justify-center'}
+        ${!isCollapsed
+  ? 'px-3 py-2 gap-5 mx-2'
+  : 'py-3 justify-center'}
         ${isActive ? 'bg-secondary font-bold' : 'hover:bg-secondary/80'}
       `}
     >
@@ -23,9 +25,14 @@ const SidebarItem = ({ icon: Icon, label, path, isCollapsed, avatar }) => {
         <img src={avatar} alt={label} className="w-6 h-6 rounded-full object-cover" />
       ) : (
         <Icon className={`w-6 h-6 ${isActive ? 'text-primary' : 'text-foreground'}`} />
-        
+
       )}
-      <span className={`${!isCollapsed ? 'text-sm' : 'text-[10px]'} truncate w-full`}>
+      <span
+        className={`
+    text-sm truncate w-full
+    ${isCollapsed ? 'hidden' : 'block'}
+  `}
+      >
         {label}
       </span>
     </div>
@@ -35,10 +42,10 @@ const SidebarItem = ({ icon: Icon, label, path, isCollapsed, avatar }) => {
 const Sidebar = ({ isCollapsed }) => {
   const [subscriptions, setSubscriptions] = useState([]);
   const userData = useSelector(state => state.auth.userData);
-  
+
   const menuItems = [
     { icon: Home, label: 'Home', path: '/' },
-    { icon: Compass, label: 'Explore', path: '/explore' },
+    { icon: Users, label: 'Community', path: '/community' },
     { icon: Film, label: 'Shorts', path: '/shorts' },
     { icon: PlaySquare, label: 'Subscriptions', path: '/subscriptions' },
   ];
@@ -49,9 +56,9 @@ const Sidebar = ({ isCollapsed }) => {
         try {
           // Adjust the ID access based on your specific userData structure
           const userId = userData?._id || userData?.user?._id;
-      
+
           const response = await subscriptionService.getSubscribedChannels(userId);
-          
+
           // Assuming response.data contains the list of channels
           setSubscriptions(response || []);
         } catch (error) {
@@ -63,12 +70,15 @@ const Sidebar = ({ isCollapsed }) => {
   }, [userData]);
 
   return (
-    <aside 
-      className={`
-        flex flex-col border-r border-border bg-background transition-all duration-300
-        ${!isCollapsed ? 'w-64' : 'w-20'}
-      `}
-    >
+   <aside
+  className={`
+    fixed md:relative z-40
+    flex flex-col border-r border-border bg-background
+    transition-all duration-300
+    ${!isCollapsed ? 'w-64' : 'w-20'}
+    ${isCollapsed ? '-translate-x-full md:translate-x-0' : 'translate-x-0'}
+  `}
+>
       <div className="py-2 space-y-1">
         {menuItems.map((item) => (
           <SidebarItem key={item.path} {...item} isCollapsed={isCollapsed} />
@@ -85,7 +95,7 @@ const Sidebar = ({ isCollapsed }) => {
             <div className="space-y-1">
               {subscriptions.length > 0 ? (
                 subscriptions.map((sub) => (
-                  <SidebarItem 
+                  <SidebarItem
                     key={sub._id}
                     label={sub?.fullName || "Channel"}
                     avatar={sub?.avatar}

@@ -144,12 +144,19 @@ const VideoPlay = () => {
             </div>
             </Link>
    
-         <Button className="rounded-full px-5 ml-2 font-semibold text-sm h-9 bg-foreground text-background hover:bg-foreground/90"
-              onClick = {handleToggle}
-            >
-              {console.log("video: ", video)}
-              {video.owner?.isSubscribed ? "Subscribed" : "Subscribe"}
-            </Button>
+   
+{video.owner?._id !== userData?.user?._id && (
+  <Button
+    onClick={handleToggle}
+    className={`rounded-full px-5 ml-2 font-semibold transition-all ${
+      video.owner?.isSubscribed
+        ? "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+        : "bg-foreground text-background hover:bg-foreground/90"
+    }`}
+  >
+    {video.owner?.isSubscribed ? "Subscribed" : "Subscribe"}
+  </Button>
+)}
 
           </div>
           

@@ -44,7 +44,16 @@ function App() {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar - only shown on non-auth pages */}
-        {showNav && <Sidebar isCollapsed={isSidebarCollapsed} />}
+        
+           {/* Mobile overlay */}
+        {showNav && !isSidebarCollapsed && (
+          <div
+            className="fixed inset-0 bg-black/50 z-30 md:hidden"
+            onClick={toggleSidebar}
+          />
+        )}
+
+        {showNav && <Sidebar isCollapsed={isSidebarCollapsed} onClose={toggleSidebar} />}
 
         {/* Dynamic Page Content */}
         <main className="flex-1 overflow-y-auto">
