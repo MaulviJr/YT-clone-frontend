@@ -298,8 +298,8 @@ const tabs = [
 
 
         {/* 4. Content Area Placeholder */}
-        <div className="mt-12 py-20 text-center flex flex-col items-center justify-center border-2 border-dashed border-border rounded-3xl opacity-50">
-         <Outlet />
+        <div className="mt-6">
+         <Outlet context={{ channelInfo }} />
         </div>
       </div>
     </div>

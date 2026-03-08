@@ -4,6 +4,7 @@ export class VideoService {
     async fetchVideos(queryParams) {
         try {
             const response = await axiosInstance.get("/videos", { params: queryParams });
+            console.log('API response for fetchVideos:', response.data);
             return response.data.data.docs; 
         } catch (error) {
             throw error.response?.data || error;
