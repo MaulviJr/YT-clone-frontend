@@ -1,6 +1,6 @@
 import axiosInstance from "./axiosInstance";
 
-export class playlistService {
+export class PlaylistService {
 
     async createPlaylist(playlistData) {
         try {
@@ -69,5 +69,5 @@ export class playlistService {
 
 }
 
-const playlistService = new playlistService();
-export default playlistService;
+const playlistServiceInstance = new PlaylistService();
+export default playlistServiceInstance;

@@ -72,11 +72,12 @@ import { Outlet } from 'react-router-dom';
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import authService from '@/api/auth.service';
+import subscriptionService from '@/api/subscription.service';
 import { Button } from './ui/button';
 import { useNavigate, useParams } from 'react-router-dom';
-import { CheckCircle2, Share2, Settings } from 'lucide-react';
-import { Navigate } from 'react-router-dom';
+import { CheckCircle2, Share2, ListVideo } from 'lucide-react';
 import { ImageUpdateDialog } from './profileComponents/profCompIndex';
+import CreatePlaylistDialog from './profileComponents/CreatePlaylistDialog';
 /**
  * Profile Component
  * Redesigned with a YouTube-like interface while maintaining 
@@ -91,6 +92,8 @@ const navigate = useNavigate()
 const [avatarDialogOpen, setIsAvatarDialogOpen] = useState(false);
 const [coverDialogOpen, setIsCoverDialogOpen] = useState(false);
 const [uploading, setUploading] = useState(false);
+const [playlistDialogOpen, setPlaylistDialogOpen] = useState(false);
+const [subscriptionLoading, setSubscriptionLoading] = useState(false);
 
 const handleImageUpdate = async (e, type) => {
     const file = e.target.files[0];
@@ -124,6 +127,33 @@ const tabs = [
   { label: "Community", path: "community" },
   { label: "About", path: "about" },
 ];
+
+const handleToggleSubscription = async () => {
+  if (!channelInfo?._id || subscriptionLoading) return;
+
+  try {
+    setSubscriptionLoading(true);
+    const response = await subscriptionService.toggleSubscription(channelInfo._id);
+    const subscribed = !!response?.subscribed;
+
+    setChannelInfo((prev) => {
+      if (!prev) return prev;
+      const currentCount = prev.subscribersCount || 0;
+      return {
+        ...prev,
+        isSubscribed: subscribed,
+        subscribersCount: subscribed ? currentCount + 1 : Math.max(currentCount - 1, 0),
+      };
+    });
+
+    // Let pages like CommunityHome refresh sidebar subscriptions without full reload.
+    window.dispatchEvent(new CustomEvent('subscriptions:changed'));
+  } catch (error) {
+    console.error('Failed to toggle subscription:', error);
+  } finally {
+    setSubscriptionLoading(false);
+  }
+};
 
 
   const isOwnProfile = !username || username === userData?.user.username;
@@ -231,8 +261,10 @@ const tabs = [
                   >
                     Customize Channel
                   </Button>
-                  <Button variant="secondary" className="rounded-full flex items-center gap-2 font-semibold">
-                    <Settings size={18} /> Manage Videos
+                  <Button variant="secondary" className="rounded-full flex items-center gap-2 font-semibold"
+                    onClick={() => setPlaylistDialogOpen(true)}
+                  >
+                    <ListVideo size={18} /> Create Playlist
                   </Button>
                 </>
               ) : (
@@ -243,8 +275,10 @@ const tabs = [
                         ? "bg-secondary text-secondary-foreground hover:bg-secondary/80" 
                         : "bg-foreground text-background hover:bg-foreground/90"
                     }`}
+                    onClick={handleToggleSubscription}
+                    disabled={subscriptionLoading}
                   >
-                    {channelInfo.isSubscribed ? "Subscribed" : "Subscribe"}
+                    {subscriptionLoading ? 'Updating...' : channelInfo.isSubscribed ? "Subscribed" : "Subscribe"}
                   </Button>
                   <Button variant="ghost" size="icon" className="rounded-full hover:bg-secondary">
                     <Share2 size={20} />
@@ -291,6 +325,13 @@ const tabs = [
         onFileSelect={(e) => handleImageUpdate(e, 'cover')}
         title="Update Banner Image"
         uploading={uploading}
+    />
+
+    <CreatePlaylistDialog
+        isOpen={playlistDialogOpen}
+        onClose={() => setPlaylistDialogOpen(false)}
+        channelInfo={channelInfo}
+        onPlaylistCreated={() => {}}
     />
 
   </div>

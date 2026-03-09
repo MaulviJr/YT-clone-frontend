@@ -4,11 +4,13 @@ import ProfileHome from "./ProfileHome";
 import ProfilePlaylist from "./ProfilePlaylist";
 import ProfileVideo from "./ProfileVideo";
 import ImageUpdateDialog from "./ImageUpdateDialogue";
+import CreatePlaylistDialog from "./CreatePlaylistDialog";
 export {
       ProfileHome,
   ProfileAbout,
   ProfileCommunity,
   ProfilePlaylist,
   ProfileVideo,
-  ImageUpdateDialog
+  ImageUpdateDialog,
+  CreatePlaylistDialog
 }

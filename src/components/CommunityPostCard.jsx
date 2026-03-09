@@ -1,13 +1,16 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ThumbsUp, ThumbsDown, MessageSquare, MoreVertical, Share2, Pencil, Trash2, Loader2 } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteTweet, updateTweet } from '../store/tweetSlice';
 import { Button } from './ui/button';
+import likeService from '@/api/like.service';
+import commentService from '@/api/comment.service';
 
-function CommunityPostCard({ post }) {
+function CommunityPostCard({ post, onPostDeleted, onPostUpdated }) {
   const { _id: tweetId, content, owner, createdAt, likesCount = 0 } = post;
   const dispatch = useDispatch();
   const currentUserId = useSelector((state) => state.auth?.userData?.user?._id);
+  const currentUser = useSelector((state) => state.auth?.userData?.user);
   const isOwner = currentUserId && owner?._id === currentUserId;
 
   const [menuOpen, setMenuOpen] = useState(false);
@@ -15,7 +18,23 @@ function CommunityPostCard({ post }) {
   const [editContent, setEditContent] = useState(content);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isLiked, setIsLiked] = useState(!!post?.isLiked);
+  const [likes, setLikes] = useState(likesCount || 0);
+  const [isLikeLoading, setIsLikeLoading] = useState(false);
+
+  const [showComments, setShowComments] = useState(false);
+  const [comments, setComments] = useState([]);
+  const [commentsLoading, setCommentsLoading] = useState(false);
+  const [commentText, setCommentText] = useState('');
+  const [commentPosting, setCommentPosting] = useState(false);
+  const [likedCommentIds, setLikedCommentIds] = useState({});
+  const [commentLikesMap, setCommentLikesMap] = useState({});
   const menuRef = useRef(null);
+
+  useEffect(() => {
+    setLikes(likesCount || 0);
+    setIsLiked(!!post?.isLiked);
+  }, [likesCount, post?.isLiked, tweetId]);
 
   const getTimeAgo = (dateString) => {
     const date = new Date(dateString);
@@ -37,6 +56,7 @@ function CommunityPostCard({ post }) {
     setIsDeleting(true);
     try {
       await dispatch(deleteTweet(tweetId)).unwrap();
+      onPostDeleted?.(tweetId);
     } catch (err) {
       console.error('Delete failed:', err);
       setIsDeleting(false);
@@ -51,11 +71,101 @@ function CommunityPostCard({ post }) {
     setIsSaving(true);
     try {
       await dispatch(updateTweet({ tweetId, content: editContent.trim() })).unwrap();
+      onPostUpdated?.(tweetId, editContent.trim());
       setIsEditing(false);
     } catch (err) {
       console.error('Update failed:', err);
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const loadComments = async () => {
+    try {
+      setCommentsLoading(true);
+      const response = await commentService.getVideoComments(tweetId);
+      const resolvedComments = Array.isArray(response)
+        ? response
+        : Array.isArray(response?.docs)
+          ? response.docs
+          : [];
+      setComments(resolvedComments);
+
+      const initialLikesMap = {};
+      resolvedComments.forEach((comment) => {
+        initialLikesMap[comment._id] = comment.likesCount || 0;
+      });
+      setCommentLikesMap(initialLikesMap);
+    } catch (err) {
+      console.error('Failed to fetch comments:', err);
+      setComments([]);
+    } finally {
+      setCommentsLoading(false);
+    }
+  };
+
+  const toggleComments = async () => {
+    const nextOpen = !showComments;
+    setShowComments(nextOpen);
+    if (nextOpen && comments.length === 0) {
+      await loadComments();
+    }
+  };
+
+  const handleToggleTweetLike = async () => {
+    if (isLikeLoading) return;
+    try {
+      setIsLikeLoading(true);
+      await likeService.ToggleTweetLike(tweetId);
+      setIsLiked((prev) => !prev);
+      setLikes((prev) => (isLiked ? Math.max(prev - 1, 0) : prev + 1));
+    } catch (err) {
+      console.error('Failed to toggle tweet like:', err);
+    } finally {
+      setIsLikeLoading(false);
+    }
+  };
+
+  const handlePostComment = async () => {
+    const trimmed = commentText.trim();
+    if (!trimmed || commentPosting) return;
+
+    try {
+      setCommentPosting(true);
+      const newComment = await commentService.createComment(tweetId, { content: trimmed });
+      const optimisticComment = {
+        ...newComment,
+        content: trimmed,
+        owner: {
+          _id: currentUser?._id,
+          username: currentUser?.username,
+          fullName: currentUser?.fullName,
+          avatar: currentUser?.avatar,
+        },
+      };
+      setComments((prev) => [optimisticComment, ...prev]);
+      setCommentText('');
+    } catch (err) {
+      console.error('Failed to post comment:', err);
+    } finally {
+      setCommentPosting(false);
+    }
+  };
+
+  const handleToggleCommentLike = async (commentId) => {
+    try {
+      await likeService.ToggleCommentLike(commentId);
+      const currentlyLiked = !!likedCommentIds[commentId];
+      setLikedCommentIds((prev) => ({
+        ...prev,
+        [commentId]: !currentlyLiked,
+      }));
+      setCommentLikesMap((prev) => ({
+        ...prev,
+        [commentId]: Math.max((prev[commentId] || 0) + (currentlyLiked ? -1 : 1), 0),
+      }));
+    } catch (err) {
+      console.error('Failed to toggle comment like:', err);
     }
   };
 
@@ -163,14 +273,18 @@ function CommunityPostCard({ post }) {
           {/* Footer Actions */}
           {!isEditing && (
             <div className="flex items-center gap-4 pt-3">
-              <div className="flex items-center gap-1.5 group cursor-pointer">
-                <div className="p-2 group-hover:bg-primary/10 rounded-full transition-colors">
-                  <ThumbsUp size={18} className="text-muted-foreground group-hover:text-primary transition-transform group-active:scale-125" />
+              <button
+                onClick={handleToggleTweetLike}
+                disabled={isLikeLoading}
+                className="flex items-center gap-1.5 group cursor-pointer disabled:opacity-70"
+              >
+                <div className={`p-2 rounded-full transition-colors ${isLiked ? 'bg-primary/10' : 'group-hover:bg-primary/10'}`}>
+                  <ThumbsUp size={18} className={`transition-transform group-active:scale-125 ${isLiked ? 'text-primary' : 'text-muted-foreground group-hover:text-primary'}`} />
                 </div>
-                <span className="text-xs font-semibold text-muted-foreground group-hover:text-primary">
-                  {likesCount > 0 ? likesCount : ''}
+                <span className={`text-xs font-semibold ${isLiked ? 'text-primary' : 'text-muted-foreground group-hover:text-primary'}`}>
+                  {likes > 0 ? likes : ''}
                 </span>
-              </div>
+              </button>
 
               <div className="flex items-center group cursor-pointer">
                 <div className="p-2 group-hover:bg-secondary rounded-full transition-colors">
@@ -178,18 +292,84 @@ function CommunityPostCard({ post }) {
                 </div>
               </div>
 
-              <div className="flex items-center gap-1.5 group cursor-pointer">
+              <button onClick={toggleComments} className="flex items-center gap-1.5 group cursor-pointer">
                 <div className="p-2 group-hover:bg-secondary rounded-full transition-colors">
                   <MessageSquare size={18} className="text-muted-foreground" />
                 </div>
-                <span className="text-xs font-semibold text-muted-foreground group-hover:text-foreground">Reply</span>
-              </div>
+                <span className="text-xs font-semibold text-muted-foreground group-hover:text-foreground">
+                  {showComments ? 'Hide' : 'Reply'}
+                </span>
+              </button>
 
               <div className="flex items-center group cursor-pointer ml-auto">
                 <div className="p-2 hover:bg-secondary rounded-full transition-colors">
                   <Share2 size={18} className="text-muted-foreground" />
                 </div>
               </div>
+            </div>
+          )}
+
+          {showComments && !isEditing && (
+            <div className="pt-2 border-t border-border/70 space-y-3">
+              <div className="flex items-start gap-2">
+                <img
+                  src={currentUser?.avatar || 'https://github.com/shadcn.png'}
+                  alt="user"
+                  className="w-8 h-8 rounded-full object-cover border border-border"
+                />
+                <div className="flex-1 space-y-2">
+                  <textarea
+                    value={commentText}
+                    onChange={(e) => setCommentText(e.target.value)}
+                    placeholder="Add a comment..."
+                    rows={2}
+                    className="w-full bg-transparent border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+                  />
+                  <div className="flex justify-end">
+                    <Button
+                      size="sm"
+                      onClick={handlePostComment}
+                      disabled={commentPosting || !commentText.trim()}
+                      className="rounded-full h-8 px-4 text-xs font-semibold"
+                    >
+                      {commentPosting ? <Loader2 size={12} className="animate-spin" /> : 'Comment'}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              {commentsLoading ? (
+                <div className="flex items-center gap-2 text-xs text-muted-foreground py-2">
+                  <Loader2 size={14} className="animate-spin" /> Loading comments...
+                </div>
+              ) : comments.length === 0 ? (
+                <p className="text-xs text-muted-foreground">No comments yet.</p>
+              ) : (
+                <div className="space-y-3">
+                  {comments.map((comment) => (
+                    <div key={comment._id} className="flex items-start gap-2">
+                      <img
+                        src={comment.owner?.avatar || 'https://github.com/shadcn.png'}
+                        alt={comment.owner?.username}
+                        className="w-7 h-7 rounded-full object-cover border border-border"
+                      />
+                      <div className="flex-1">
+                        <div className="text-xs text-muted-foreground mb-0.5">
+                          @{comment.owner?.username || 'user'}
+                        </div>
+                        <p className="text-sm text-foreground whitespace-pre-wrap">{comment.content}</p>
+                        <button
+                          onClick={() => handleToggleCommentLike(comment._id)}
+                          className="mt-1 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary"
+                        >
+                          <ThumbsUp size={12} />
+                          <span>{commentLikesMap[comment._id] > 0 ? commentLikesMap[comment._id] : ''}</span>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>

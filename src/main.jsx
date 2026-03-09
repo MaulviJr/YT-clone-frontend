@@ -27,6 +27,7 @@ import {
 } from './pages/community/commIndex.js'
 
 import VideoPlay from './pages/videos/VideoPlay'
+import PlaylistPlay from './pages/videos/PlaylistPlay'
 
 const router = createBrowserRouter([
   {
@@ -78,6 +79,14 @@ const router = createBrowserRouter([
         element: (
           <AuthLayout authentication={true}>
            <VideoPlay/>
+          </AuthLayout>
+        )
+      },
+      {
+        path: '/playlist/:playlistId',
+        element: (
+          <AuthLayout authentication={true}>
+            <PlaylistPlay />
           </AuthLayout>
         )
       },
