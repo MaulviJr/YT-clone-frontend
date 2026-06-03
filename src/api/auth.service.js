@@ -23,7 +23,7 @@ export class AuthService {
     
     // Now you can display this exact string in a toast notification or state!
     console.log("Backend Error:", errorMessage);
-    setErrorState(errorMessage);
+  
         }
     }
 
