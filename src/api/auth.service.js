@@ -19,7 +19,11 @@ export class AuthService {
             console.log("AuthService :: login :: response", response);
             return response.data.data; // Returns the loggedInUser
         } catch (error) {
-            throw error.response?.data || error;
+         const errorMessage = error.response?.data?.message || "An unexpected error occurred";
+    
+    // Now you can display this exact string in a toast notification or state!
+    console.log("Backend Error:", errorMessage);
+    setErrorState(errorMessage);
         }
     }
 
