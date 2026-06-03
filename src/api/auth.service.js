@@ -20,7 +20,7 @@ export class AuthService {
             return response.data.data; // Returns the loggedInUser
         } catch (error) {
          const errorMessage = error.response?.data?.message || "An unexpected error occurred";
-    
+            console.log(error);
     // Now you can display this exact string in a toast notification or state!
     console.log("Backend Error:", errorMessage);
   
