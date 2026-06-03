@@ -19,9 +19,9 @@ export class AuthService {
             console.log("AuthService :: login :: response", response);
             return response.data.data; // Returns the loggedInUser
         } catch (error) {
-            console.log("Backend Error Message: ", error.response?.data?.message);
+            console.log("Backend Error Message: ", error);
             console.log(error.response?.data || error);
-            throw error.response?.data?.message|| error;
+            throw error.response?.data|| error;
         }
     }
 
